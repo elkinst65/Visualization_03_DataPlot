@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="p5.min.js"></script>
+    <script src="game.js"></script>
+	<style>
+		body {
+			font-family: Arial;
+			color: yellow;
+			font-size: 14pt;
+			background-color: black;
+		}
+		
+		td {
+			text-align: center;
+		}
+	</style>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  <style> body {padding: 0; margin: 0;} </style>
+  </head>
+  <body>
+	<table width="100%">
+		<tr><td colspan="2">Trap the Balls</td></tr>
+		<tr><td>Instructions</td><td><span id="score">Level: #  Required: #  Trapped: 0</span></td></tr>
+		<tr><td>The goal is to trap the requisite number of balls.  To do so left-click on the screen where you want to launch the Trapper.
+		The Trapper will expand and become sticky.  Any ball that touches it will become another Trapper.  Try to make a chain reaction
+		to capture the most balls.</td><td id="board"></td></tr>
+		<tr><td colspan="2" id="status"></td></tr>
+	</table>
+  </body>
+</html>
