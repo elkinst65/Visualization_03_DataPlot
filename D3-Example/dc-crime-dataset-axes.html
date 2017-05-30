@@ -1,0 +1,219 @@
+<html>
+
+<meta charset="utf-8" />
+<head>
+<title>D3 - DC Crime Data Set</title>
+<style>
+h1 {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+svg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid black;
+}
+
+svg text {
+  font-size: 11px;
+  font-family: sans-serif;
+  text-anchor: middle;
+  fill: black;
+}
+
+</style>
+<script src="../d3/d3.v3.js" charset="utf-8"></script>
+</head>
+
+<body>
+<h1>D3 DC Crime Data Set</h1>
+<svg class="chart"></svg>
+
+<script>
+var chartWidth = 500;
+var chartHeight = 500;
+
+/********
+ * Data *
+ ********/
+
+var sampleDCCrimeData = [
+            {
+            "CCN": 14151815,
+            "PSA_ID": 305,
+            "DistrictID": 3,
+            "SHIFT_Code": 1,
+            "OFFENSE_Code": 1,
+            "Method_Code": 1,
+            "Crime_TYPE": "violent",
+            "WARD": 1,
+            "ANC": 12,
+            "NEIGHBORHOOD_CLUSTER": 3,
+            "CENSUS_TRACT": 4300,
+            "VOTING_PRECINCT": 22,
+            "DAY": 31,
+            "survived": 1
+            },
+            {
+            "CCN": 14174448,
+            "PSA_ID": 408,
+            "DistrictID": 4,
+            "SHIFT_Code": 1,
+            "OFFENSE_Code": 1,
+            "Method_Code": 1,
+            "Crime_TYPE": "violent",
+            "WARD": 1,
+            "ANC": 14,
+            "NEIGHBORHOOD_CLUSTER": 2,
+            "CENSUS_TRACT": 2701,
+            "VOTING_PRECINCT": 40,
+            "DAY": 2,
+            "survived": 1
+            },
+            {
+            "CCN": 15009583,
+            "PSA_ID": 408,
+            "DistrictID": 4,
+            "SHIFT_Code": 1,
+            "OFFENSE_Code": 1,
+            "Method_Code": 1,
+            "Crime_TYPE": "violent",
+            "WARD": 1,
+            "ANC": 14,
+            "NEIGHBORHOOD_CLUSTER": 2,
+            "CENSUS_TRACT": 2701,
+            "VOTING_PRECINCT": 40,
+            "DAY": 1,
+            "survived": 0
+            },
+            {
+            "CCN": 15000583,
+            "PSA_ID": 305,
+            "DistrictID": 3,
+            "SHIFT_Code": 3,
+            "OFFENSE_Code": 5,
+            "Method_Code": 2,
+            "Crime_TYPE": "non-violent",
+            "WARD": 1,
+            "ANC": 14,
+            "NEIGHBORHOOD_CLUSTER": 2,
+            "CENSUS_TRACT": 4400,
+            "VOTING_PRECINCT": 40,
+            "DAY": 0,
+            "survived": 0
+            },
+            {
+            "CCN": 15004880,
+            "PSA_ID": 303,
+            "DistrictID": 3,
+            "SHIFT_Code": 2,
+            "OFFENSE_Code": 5,
+            "Method_Code": 3,
+            "Crime_TYPE": "non-violent",
+            "WARD": 1,
+            "ANC": 13,
+            "NEIGHBORHOOD_CLUSTER": 1,
+            "CENSUS_TRACT": 3800,
+            "VOTING_PRECINCT": 35,
+            "DAY": 0,
+            "survived": 0
+            }
+            ];
+
+/**********
+ * Scales *
+ **********/
+var x,y,c,s,r;
+
+
+/********
+ * Axes *
+ ********/
+
+var xAxis;
+var yAxis;
+
+/**************
+ * Make Chart *
+ **************/
+
+function makeChart(data){
+
+  // y position
+  y = d3.scaleLinear()
+      .domain(d3.extent(sampleDCCrimeData,function(d){ return d.DAY; }))
+      .range([465,10]);
+
+  // x position
+  x = d3.scaleLinear()
+      .domain([0,data.length-1])
+      .range([60,440]);
+
+  // color
+  c = d3.scaleOrdinal()
+      .domain(["violent","non-violent"])
+      .range(["#a6cee3","#fb9a99"]);
+
+  // stroke
+  s = d3.scaleOrdinal()
+      .domain(["0","1"])
+      .range(["#e31a1c","#1f78b4"]);
+
+  // radius
+  r = d3.scaleLinear()
+      .domain([0,d3.max(sampleDCCrimeData,function(d){ return d.VOTING_PRECINCT; })])
+      .range([5,10]);
+
+  var canvas = d3.select(".chart")
+      .style("width",chartWidth)
+      .style("height",chartHeight);
+
+  var scatter = d3.select(".chart").selectAll("circle")
+      .data(data);
+
+  //ENTER
+  var enter = scatter.enter().append("circle")
+      .attr("fill-opacity",0.85)
+      .attr("r",function(d){ return 5; })
+      .attr("stroke-width","0px");
+
+  // Add a title to the point (on mouseover)
+  enter.append("svg:title")
+      .text(function(d){ return d.CCN; });
+
+  //ENTER + UPDATE
+  enter.merge(scatter)
+      .attr("cx",function(d,i){ return x(i); })
+      .attr("cy",function(d){ return y(d.DAY); })
+      .attr("fill",function(d){ return c(d.Crime_TYPE); })
+      .attr("stroke",function(d){ return s(d.survived); });
+
+  xAxis = d3.axisBottom()
+      .scale(x)
+      .ticks(0);
+
+  yAxis = d3.axisLeft()
+      .scale(y);
+
+  var yAxisGroup = canvas.append("g")
+      .attr("class","axis")
+      .attr("transform","translate(25,0)")
+      .call(yAxis);
+
+  yAxisGroup.selectAll("text")
+      .attr("transform", "translate(-5,0)");
+
+  canvas.append("g")
+      .attr("class","axis")
+      .attr("transform","translate(0,"+(chartHeight-25)+")")
+      .call(xAxis);
+
+}
+
+makeChart(sampleDCCrimeData);
+
+</script>
+</body>
+</html>
